@@ -567,6 +567,8 @@ void ARMv5::DataAbort()
     JumpTo(ExceptionBase + 0x10);
 }
 
+static int debugarm9 = 0;
+
 void ARMv5::Execute()
 {
     if (Halted)
@@ -587,9 +589,12 @@ void ARMv5::Execute()
             return;
         }
     }
-
+			
     while (NDS::ARM9Timestamp < NDS::ARM9Target)
     {
+		//if(debugarm9) printf("ARM9 PC=%08X\n", R[15]);
+		//if(R[15] == 0xFFFF0718) debugarm9 = 1;
+		
         if (CPSR & 0x20) // THUMB
         {
             // prefetch
@@ -737,7 +742,8 @@ void ARMv4::Execute()
             return;
         }
     }
-
+	
+	//printf("ARM7 PC=%08X\n", R[15]);
     while (NDS::ARM7Timestamp < NDS::ARM7Target)
     {
         if (CPSR & 0x20) // THUMB

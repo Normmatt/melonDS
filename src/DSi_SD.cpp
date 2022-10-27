@@ -850,6 +850,7 @@ void DSi_MMCStorage::DoSavestate(Savestate* file)
 
 void DSi_MMCStorage::SendCMD(u8 cmd, u32 param)
 {
+	printf("SD/MMC SendCMD %02X, %08X\n",cmd,param);
     if (CSR & (1<<5))
     {
         CSR &= ~(1<<5);

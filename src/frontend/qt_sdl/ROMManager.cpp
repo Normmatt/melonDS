@@ -147,11 +147,11 @@ QString VerifyDSiBIOS()
 
     fseek(f, 0, SEEK_END);
     len = ftell(f);
-    if (len != 0x10000)
+    /*if (len != 0x10000)
     {
         fclose(f);
         return "DSi ARM9 BIOS is not a valid BIOS dump.";
-    }
+    }*/
 
     fclose(f);
 

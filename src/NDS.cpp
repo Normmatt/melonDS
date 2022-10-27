@@ -3270,6 +3270,7 @@ u32 ARM9IORead32(u32 addr)
                 if (IPCFIFO7.IsEmpty() && (IPCFIFOCnt7 & 0x0004))
                     SetIRQ(1, IRQ_IPCSendDone);
             }
+			printf("ARM9 Read FIFO %08X\n",ret);
             return ret;
         }
         else
@@ -3641,6 +3642,7 @@ void ARM9IOWrite32(u32 addr, u32 val)
             {
                 bool wasempty = IPCFIFO9.IsEmpty();
                 IPCFIFO9.Write(val);
+				printf("ARM9 Write FIFO %08X (tag %02X, val=%d/0x%02X)\n",val, val & 0x1f, val>>6, val>>6);
                 if ((IPCFIFOCnt7 & 0x0400) && wasempty)
                     SetIRQ(1, IRQ_IPCRecv);
             }
@@ -4021,6 +4023,7 @@ u32 ARM7IORead32(u32 addr)
                 if (IPCFIFO9.IsEmpty() && (IPCFIFOCnt9 & 0x0004))
                     SetIRQ(0, IRQ_IPCSendDone);
             }
+			printf("ARM7 Read FIFO  %08X\n",ret);
             return ret;
         }
         else
@@ -4329,6 +4332,7 @@ void ARM7IOWrite32(u32 addr, u32 val)
             {
                 bool wasempty = IPCFIFO7.IsEmpty();
                 IPCFIFO7.Write(val);
+				printf("ARM7 Write FIFO %08X (tag %02X, val=%d/0x%02X)\n",val, val & 0x1f, val>>6, val>>6);
                 if ((IPCFIFOCnt9 & 0x0400) && wasempty)
                     SetIRQ(0, IRQ_IPCRecv);
             }

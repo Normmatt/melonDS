@@ -157,7 +157,7 @@ void Reset()
 
     DSi_AES::Reset();
 
-    SCFG_BIOS = 0x0101; // TODO: should be zero when booting from BIOS
+    SCFG_BIOS = 0x0; // TODO: should be zero when booting from BIOS
     SCFG_Clock9 = 0x0187; // CHECKME
     SCFG_Clock7 = 0x0187;
     SCFG_EXT[0] = 0x8307F100;
@@ -396,7 +396,7 @@ void SetupDirectBoot()
     }
     else
     {
-        SCFG_BIOS = 0x0101;
+        SCFG_BIOS = 0;
 
         // WRAM mapping
 
@@ -696,8 +696,8 @@ bool LoadBIOS()
     }
 
     // herp
-    *(u32*)&ARM9iBIOS[0] = 0xEAFFFFFE;
-    *(u32*)&ARM7iBIOS[0] = 0xEAFFFFFE;
+    //*(u32*)&ARM9iBIOS[0] = 0xEAFFFFFE;
+    //*(u32*)&ARM7iBIOS[0] = 0xEAFFFFFE;
 
     // TODO!!!!
     // hax the upper 32K out of the goddamn DSi
@@ -798,7 +798,7 @@ bool LoadNAND()
     u8 tmp[16];
     u32 dstaddr;
 
-    *(u32*)&tmp[0] = bootparams[3];
+    /**(u32*)&tmp[0] = bootparams[3];
     *(u32*)&tmp[4] = -bootparams[3];
     *(u32*)&tmp[8] = ~bootparams[3];
     *(u32*)&tmp[12] = 0;
@@ -846,7 +846,7 @@ bool LoadNAND()
         ARM7Write32(dstaddr, *(u32*)&data[4]); dstaddr += 4;
         ARM7Write32(dstaddr, *(u32*)&data[8]); dstaddr += 4;
         ARM7Write32(dstaddr, *(u32*)&data[12]); dstaddr += 4;
-    }
+    }*/
 
 #define printhex(str, size) { for (int z = 0; z < (size); z++) printf("%02X", (str)[z]); printf("\n"); }
 #define printhex_rev(str, size) { for (int z = (size)-1; z >= 0; z--) printf("%02X", (str)[z]); printf("\n"); }
@@ -867,7 +867,7 @@ bool LoadNAND()
     ARM7Write16(eaddr+0x3E, 0x40E0);
     ARM7Write16(eaddr+0x42, 0x0001);
 
-    memcpy(&NDS::ARM9->ITCM[0x4400], &ARM9iBIOS[0x87F4], 0x400);
+    /*memcpy(&NDS::ARM9->ITCM[0x4400], &ARM9iBIOS[0x87F4], 0x400);
     memcpy(&NDS::ARM9->ITCM[0x4800], &ARM9iBIOS[0x9920], 0x80);
     memcpy(&NDS::ARM9->ITCM[0x4894], &ARM9iBIOS[0x99A0], 0x1048);
     memcpy(&NDS::ARM9->ITCM[0x58DC], &ARM9iBIOS[0xA9E8], 0x1048);
@@ -880,11 +880,11 @@ bool LoadNAND()
     memcpy(&ARM7Init[0x129C], &ARM7iBIOS[0xD718], 0x1048);
 
     for (u32 i = 0; i < 0x3C00; i+=4)
-        ARM7Write32(0x03FFC400+i, *(u32*)&ARM7Init[i]);
+        ARM7Write32(0x03FFC400+i, *(u32*)&ARM7Init[i]);*/
 
     // repoint the CPUs to the boot2 binaries
-    NDS::ARM9->JumpTo(bootparams[2]);
-    NDS::ARM7->JumpTo(bootparams[6]);
+    NDS::ARM9->JumpTo(0xFFFF0000);
+    NDS::ARM7->JumpTo(0x00000000);
 
     DSi_NAND::PatchUserData();
 
@@ -2534,7 +2534,10 @@ void ARM9IOWrite32(u32 addr, u32 val)
 
     case 0x04004040:
         if (!(SCFG_EXT[0] & (1 << 31))) /* no access to SCFG Registers if disabled*/
+		{
+			printf("MapNWRAM_A not allowed.\n");
             return;
+		}
         MapNWRAM_A(0, val & 0xFF);
         MapNWRAM_A(1, (val >> 8) & 0xFF);
         MapNWRAM_A(2, (val >> 16) & 0xFF);
@@ -2542,7 +2545,10 @@ void ARM9IOWrite32(u32 addr, u32 val)
         return;
     case 0x04004044:
         if (!(SCFG_EXT[0] & (1 << 31))) /* no access to SCFG Registers if disabled*/
+        {
+			printf("MapNWRAM_B1 not allowed.\n");
             return;
+		}
         MapNWRAM_B(0, val & 0xFF);
         MapNWRAM_B(1, (val >> 8) & 0xFF);
         MapNWRAM_B(2, (val >> 16) & 0xFF);
@@ -2550,7 +2556,10 @@ void ARM9IOWrite32(u32 addr, u32 val)
         return;
     case 0x04004048:
         if (!(SCFG_EXT[0] & (1 << 31))) /* no access to SCFG Registers if disabled*/
+        {
+			printf("MapNWRAM_B2 not allowed.\n");
             return;
+		}
         MapNWRAM_B(4, val & 0xFF);
         MapNWRAM_B(5, (val >> 8) & 0xFF);
         MapNWRAM_B(6, (val >> 16) & 0xFF);
@@ -2558,7 +2567,10 @@ void ARM9IOWrite32(u32 addr, u32 val)
         return;
     case 0x0400404C:
         if (!(SCFG_EXT[0] & (1 << 31))) /* no access to SCFG Registers if disabled*/
+        {
+			printf("MapNWRAM_C1 not allowed.\n");
             return;
+		}
         MapNWRAM_C(0, val & 0xFF);
         MapNWRAM_C(1, (val >> 8) & 0xFF);
         MapNWRAM_C(2, (val >> 16) & 0xFF);
@@ -2566,7 +2578,10 @@ void ARM9IOWrite32(u32 addr, u32 val)
         return;
     case 0x04004050:
         if (!(SCFG_EXT[0] & (1 << 31))) /* no access to SCFG Registers if disabled*/
+        {
+			printf("MapNWRAM_C2 not allowed.\n");
             return;
+		}
         MapNWRAM_C(4, val & 0xFF);
         MapNWRAM_C(5, (val >> 8) & 0xFF);
         MapNWRAM_C(6, (val >> 16) & 0xFF);

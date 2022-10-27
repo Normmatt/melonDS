@@ -222,6 +222,7 @@ void SetupFATCrypto(AES_ctx* ctx, u32 ctr)
 
 u32 ReadFATBlock(u64 addr, u32 len, u8* buf)
 {
+	printf("ReadFATBlock 0x%llx, 0x%08X\n", addr, len);
     u32 ctr = (u32)(addr >> 4);
 
     AES_ctx ctx;

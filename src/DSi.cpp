@@ -2903,7 +2903,8 @@ void ARM7IOWrite16(u32 addr, u16 val)
                 MBK[1][8] = MBK[0][8];
             }
             return;
-
+		case 0x04004406: DSi_AES::WriteBlkCnt(val<<16); return;
+		
         case 0x4004700:
             DSi_DSP::WriteSNDExCnt(val);
             return;
